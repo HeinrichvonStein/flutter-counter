@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_counter/widgets/counter_widget.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class CounterScreen extends StatelessWidget {
   /// A screen that displays a counter widget.
@@ -17,7 +18,7 @@ class CounterScreen extends StatelessWidget {
         title: Text('Counter App', style: Theme.of(context).textTheme.titleLarge),
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () => Supabase.instance.client.auth.signOut(),
             icon: Icon(Icons.exit_to_app, color: Theme.of(context).colorScheme.primaryContainer),
           ),
         ],

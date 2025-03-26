@@ -1,26 +1,26 @@
-# flutter_counter
+# A simple Flutter counter app
 
-A new Flutter project.
+This is a simple Flutter counter app that uses Supabase for authentication and data storage.
 
-## Getting Started
+## Start Supabase
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-
-## Create a new Flutter project
+From the project root, run the following command to start Supabase:
 
 ```bash
-flutter create flutter_counter
-cd flutter_counter
+supabase start
+````
+
+This will start a local Supabase instance on `http://localhost:54323`.
+
+## Configuration
+
+Copy and rename [app_config_template.dart](lib/app_config_template.dart) to `app_config.dart` in the [lib](lib) directory
+
+```bash
+cp lib/app_config_template.dart lib/app_config.dart
 ```
+
+Update `app_config.dart` with the Supabase URL and anon key.
 
 ## Run the app
 

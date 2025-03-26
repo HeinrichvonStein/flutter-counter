@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../widgets/text_form_field_widget.dart';
 
@@ -28,7 +29,19 @@ class _LoginScreenState extends State<LoginScreen> {
   /// Toggles between login and sign-up modes.
   var _isLogin = true;
 
-  /// Handles form submission by validating and saving form input.
+  var _isAuthenticating = false;
+
+  /// Inserts the user into Supabase
+  void _insertUser() async {
+    final response = await Supabase.instance.client.from('counter').insert([
+      {'username': _enteredUsername, 'user_id': Supabase.instance.client.auth.currentUser!.id},
+    ]);
+    if (response.error != null) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(response.error!.message)));
+    }
+  }
+
+  /// Validates the form and attempts to log in or create an account.
   void _onSubmit() async {
     final isValid = _form.currentState!.validate();
 
@@ -37,6 +50,34 @@ class _LoginScreenState extends State<LoginScreen> {
     }
 
     _form.currentState!.save();
+    try {
+      setState(() {
+        _isAuthenticating = true;
+      });
+      if (_isLogin) {
+        await Supabase.instance.client.auth.signInWithPassword(
+          email: _enteredEmail,
+          password: _enteredPassword,
+          phone: '',
+        );
+      } else {
+        await Supabase.instance.client.auth.signUp(
+          email: _enteredEmail,
+          password: _enteredPassword,
+          data: {
+            'displayName': _enteredUsername, // this gets stored in `user_metadata`
+          },
+        );
+        _insertUser();
+      }
+    } on AuthException catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error.message)));
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error.toString())));
+    }
+    setState(() {
+      _isAuthenticating = false;
+    });
   }
 
   @override
@@ -93,20 +134,22 @@ class _LoginScreenState extends State<LoginScreen> {
             onSaved: (value) => _enteredPassword = value,
           ),
           const SizedBox(height: 12),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              TextButton(
-                onPressed: () {
-                  setState(() {
-                    _isLogin = !_isLogin;
-                  });
-                },
-                child: Text(_isLogin ? 'Create Account' : 'Already have an account?'),
-              ),
-              ElevatedButton(onPressed: _onSubmit, child: Text(_isLogin ? 'Login' : 'Sign Up')),
-            ],
-          ),
+          if (_isAuthenticating) CircularProgressIndicator(),
+          if (!_isAuthenticating)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    setState(() {
+                      _isLogin = !_isLogin;
+                    });
+                  },
+                  child: Text(_isLogin ? 'Create Account' : 'Already have an account?'),
+                ),
+                ElevatedButton(onPressed: _onSubmit, child: Text(_isLogin ? 'Login' : 'Sign Up')),
+              ],
+            ),
         ],
       ),
     );

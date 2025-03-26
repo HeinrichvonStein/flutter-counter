@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_counter/screens/counter_screen.dart';
+import 'package:flutter_counter/screens/login_screen.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+import 'app_config.dart';
 
 final colorScheme = ColorScheme.fromSeed(
   brightness: Brightness.dark,
@@ -14,7 +18,10 @@ final theme = ThemeData().copyWith(
 );
 
 /// Starts the Flutter Counter app.
-void main() {
+Future<void> main() async {
+  /// Initializes Supabase with the URL and anonymous key.
+  WidgetsFlutterBinding.ensureInitialized();
+  await Supabase.initialize(url: AppConfig.supabaseUrl, anonKey: AppConfig.supabaseAnonKey);
   runApp(const CounterApp());
 }
 
@@ -32,6 +39,21 @@ class CounterApp extends StatefulWidget {
 class _CounterAppState extends State<CounterApp> {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(title: 'Flutter Counter', theme: theme, home: const CounterScreen());
+    return MaterialApp(
+      title: 'Flutter Counter',
+      theme: theme,
+      home: StreamBuilder(
+        stream: Supabase.instance.client.auth.onAuthStateChange,
+        builder: (ctx, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Scaffold(body: Center(child: CircularProgressIndicator()));
+          }
+          if (snapshot.hasData && snapshot.data!.event == AuthChangeEvent.signedIn) {
+            return const CounterScreen();
+          }
+          return const LoginScreen();
+        },
+      ),
+    );
   }
 }
