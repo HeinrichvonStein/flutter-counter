@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_counter/screens/login_screen.dart';
+import 'package:flutter_counter/screens/counter_screen.dart';
 
 final colorScheme = ColorScheme.fromSeed(
   brightness: Brightness.dark,
@@ -32,6 +32,6 @@ class CounterApp extends StatefulWidget {
 class _CounterAppState extends State<CounterApp> {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(title: 'Flutter Counter', theme: theme, home: const LoginScreen());
+    return MaterialApp(title: 'Flutter Counter', theme: theme, home: const CounterScreen());
   }
 }
