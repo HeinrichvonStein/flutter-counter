@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'counter_button_widget.dart';
 
 class CounterWidget extends StatefulWidget {
-  /// A widget that displays a counter and allows a user to increment or decrement it.
+  /// A widget that displays a counter and allows a user to increment, decrement or reset it.
   const CounterWidget({super.key});
 
   @override
@@ -13,6 +14,14 @@ class CounterWidget extends StatefulWidget {
 class _CounterWidgetState extends State<CounterWidget> {
   /// The current value of the counter.
   var _counter = 0;
+
+  /// Updates the counter in the database.
+  Future<void> _updateCounterInDB(int value) async {
+    await Supabase.instance.client
+        .from('counter')
+        .update({'counter': value})
+        .eq('user_id', Supabase.instance.client.auth.currentUser!.id);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,6 +55,7 @@ class _CounterWidgetState extends State<CounterWidget> {
               onPressed:
                   () => setState(() {
                     _counter++;
+                    _updateCounterInDB(_counter);
                   }),
             ),
             const SizedBox(width: 5),
@@ -55,6 +65,7 @@ class _CounterWidgetState extends State<CounterWidget> {
                   () => setState(() {
                     if (_counter > 0) {
                       _counter--;
+                      _updateCounterInDB(_counter);
                     }
                   }),
               increase: false,
@@ -64,6 +75,7 @@ class _CounterWidgetState extends State<CounterWidget> {
               onPressed: () {
                 setState(() {
                   _counter = 0;
+                  _updateCounterInDB(_counter);
                 });
               },
               child: Text('Reset'),
