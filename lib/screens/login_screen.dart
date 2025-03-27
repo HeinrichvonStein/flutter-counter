@@ -37,6 +37,7 @@ class _LoginScreenState extends State<LoginScreen> {
       {'username': _enteredUsername, 'user_id': Supabase.instance.client.auth.currentUser!.id},
     ]);
     if (response.error != null) {
+      ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(response.error!.message)));
     }
   }

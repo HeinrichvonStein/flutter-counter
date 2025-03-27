@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_counter/widgets/counter_table_widget.dart';
 import 'package:flutter_counter/widgets/counter_widget.dart';
+import 'package:flutter_counter/widgets/status_widget.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -33,7 +34,13 @@ class CounterScreen extends StatelessWidget {
           ),
         ),
         child: Column(
-          children: [CounterWidget(), const SizedBox(height: 20), CounterTableWidget()],
+          children: [
+            CounterWidget(),
+            const SizedBox(height: 20),
+            CounterTableWidget(),
+            const SizedBox(height: 20),
+            StatusWidget(),
+          ],
         ),
       ),
     );
