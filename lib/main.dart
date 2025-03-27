@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_counter/app_config.dart';
 import 'package:flutter_counter/screens/counter_screen.dart';
 import 'package:flutter_counter/screens/login_screen.dart';
 import 'package:flutter_counter/util/powersync.dart';
 import 'package:flutter_counter/util/supabase_backend_connector.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-
-import 'app_config.dart';
 
 final colorScheme = ColorScheme.fromSeed(
   brightness: Brightness.dark,

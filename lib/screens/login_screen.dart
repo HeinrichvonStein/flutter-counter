@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_counter/widgets/text_form_field_widget.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-
-import '../widgets/text_form_field_widget.dart';
 
 class LoginScreen extends StatefulWidget {
   /// A screen that allows users to log in or create an account.

@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_counter/util/powersync.dart';
+import 'package:flutter_counter/widgets/counter_button_widget.dart';
 import 'package:powersync/sqlite3.dart' show ResultSet;
 import 'package:supabase_flutter/supabase_flutter.dart';
-
-import '../util/powersync.dart';
-import 'counter_button_widget.dart';
 
 class CounterWidget extends StatefulWidget {
   /// A widget that displays a counter and allows a user to increment, decrement or reset it.

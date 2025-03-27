@@ -1,9 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-
-import '../models/counter.dart';
-import '../util/powersync.dart';
+import 'package:flutter_counter/models/counter.dart';
+import 'package:flutter_counter/util/powersync.dart';
 
 class CounterTableWidget extends StatefulWidget {
   /// A widget that displays a table of users and their counters.
