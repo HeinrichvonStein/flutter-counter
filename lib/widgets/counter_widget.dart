@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:powersync/sqlite3.dart' show ResultSet;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../util/powersync.dart';
 import 'counter_button_widget.dart';
 
 class CounterWidget extends StatefulWidget {
@@ -14,13 +16,30 @@ class CounterWidget extends StatefulWidget {
 class _CounterWidgetState extends State<CounterWidget> {
   /// The current value of the counter.
   var _counter = 0;
+  final userId = Supabase.instance.client.auth.currentUser!.id;
 
   /// Updates the counter in the database.
   Future<void> _updateCounterInDB(int value) async {
-    await Supabase.instance.client
-        .from('counter')
-        .update({'counter': value})
-        .eq('user_id', Supabase.instance.client.auth.currentUser!.id);
+    await db.execute('UPDATE counter set counter = ? WHERE user_id = ?', [_counter, userId]);
+  }
+
+  /// Retrieves the counter from the database.
+  Future<int> getCounter() async {
+    ResultSet results = await db.getAll('SELECT counter FROM counter WHERE user_id = ?', [userId]);
+    return results.map((row) => row['counter'] as int).first;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    /// Fetch the counter value from the database.
+    /// If the user updated their counter and logged out, we want to initialize the counter to the last value.
+    getCounter().then(
+      (value) => setState(() {
+        _counter = value;
+      }),
+    );
   }
 
   @override
