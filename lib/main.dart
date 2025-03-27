@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_counter/screens/counter_screen.dart';
 import 'package:flutter_counter/screens/login_screen.dart';
+import 'package:flutter_counter/util/powersync.dart';
+import 'package:flutter_counter/util/supabase_backend_connector.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'app_config.dart';
@@ -19,9 +21,12 @@ final theme = ThemeData().copyWith(
 
 /// Starts the Flutter Counter app.
 Future<void> main() async {
-  /// Initializes Supabase with the URL and anonymous key.
   WidgetsFlutterBinding.ensureInitialized();
+
+  /// Initializes Supabase with the URL and anonymous key.
   await Supabase.initialize(url: AppConfig.supabaseUrl, anonKey: AppConfig.supabaseAnonKey);
+
+  await openDatabase();
   runApp(const CounterApp());
 }
 
@@ -45,12 +50,17 @@ class _CounterAppState extends State<CounterApp> {
       home: StreamBuilder(
         stream: Supabase.instance.client.auth.onAuthStateChange,
         builder: (ctx, snapshot) {
+          /// If the connection is still waiting, show a loading spinner.
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Scaffold(body: Center(child: CircularProgressIndicator()));
           }
+
+          /// If the user is signed in, show the counter screen.
           if (snapshot.hasData && snapshot.data!.event == AuthChangeEvent.signedIn) {
+            db.connect(connector: SupabaseBackendConnector());
             return const CounterScreen();
           }
+          db.disconnect();
           return const LoginScreen();
         },
       ),
